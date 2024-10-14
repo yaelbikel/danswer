@@ -300,6 +300,9 @@ class WebConnector(LoadConnector):
                         file=io.BytesIO(response.content)
                     )
                     last_modified = response.headers.get("Last-Modified")
+                    document_title = response.headers.get("X-Danswer-Document-Title")
+                    if document_title:
+                        metadata["title"] = document_title
 
                     doc_batch.append(
                         Document(
@@ -324,6 +327,15 @@ class WebConnector(LoadConnector):
                     if page_response
                     else None
                 )
+                document_title = (
+                    page_response.header_value("X-Danswer-Document-Title")
+                    if page_response
+                    else None
+                )
+                metadata = {}
+                if document_title:
+                    metadata["title"] = document_title
+
                 final_page = page.url
                 if final_page != current_url:
                     logger.info(f"Redirected to {final_page}")
@@ -358,7 +370,7 @@ class WebConnector(LoadConnector):
                         ],
                         source=DocumentSource.WEB,
                         semantic_identifier=parsed_html.title or current_url,
-                        metadata={},
+                        metadata=metadata,
                         doc_updated_at=_get_datetime_from_last_modified_header(
                             last_modified
                         )
