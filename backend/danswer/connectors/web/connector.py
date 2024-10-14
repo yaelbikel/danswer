@@ -302,7 +302,7 @@ class WebConnector(LoadConnector):
                     last_modified = response.headers.get("Last-Modified")
                     document_title = response.headers.get("X-Danswer-Document-Title")
                     if document_title:
-                        metadata["title"] = document_title
+                        metadata["Title"] = document_title
 
                     doc_batch.append(
                         Document(
@@ -334,7 +334,7 @@ class WebConnector(LoadConnector):
                 )
                 metadata = {}
                 if document_title:
-                    metadata["title"] = document_title
+                    metadata["Title"] = document_title
 
                 final_page = page.url
                 if final_page != current_url:
